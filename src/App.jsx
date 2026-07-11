@@ -39,18 +39,18 @@ function App() {
   const winnerDay = winner?.day || "TBD";
   const winnerDirection = previousCandidates.length ? "anterior" : "posterior";
   const winnerMessage = birthDateValid
-    ? `Su fecha elegida ${winnerDay} fue la más cercana ${winnerDirection} al nacimiento.`
-    : `Su fecha elegida ${winnerDay} fue la más cercana al nacimiento.`;
+    ? `Tu apuesta del ${winnerDay} fue la más cercana ${winnerDirection} al nacimiento.`
+    : `Tu apuesta del ${winnerDay} fue la más cercana al nacimiento.`;
 
   return (
     <div className="app-shell">
       {isWaiting ? (
         <header className="hero">
           <div className="hero-card">
-            <p className="eyelet">Cuenta regresiva Baby Shower</p>
-            <h1>Estamos esperando a que nazca Gaby</h1>
-            <p className="subtitle">Este día se revelará a la ganadora</p>
-          </div>
+              <p className="eyelet">Apuesta por la llegada de Gaby</p>
+              <h1>Apostamos por cuándo nacerá Gaby</h1>
+              <p className="subtitle">El día del nacimiento se revelará la ganadora de la apuesta</p>
+            </div>
         </header>
       ) : (
         <main className="celebration-shell">
@@ -63,10 +63,10 @@ function App() {
             ))}
           </div>
           <section className="celebrate-card">
-            <p className="celebrate-label">¡Es hora de celebrar!</p>
-            <h1>Felicidades {winner.name} 🎉</h1>
+            <p className="celebrate-label">¡La apuesta llegó a su fin!</p>
+            <h1>Felicidades {winner.name} — ¡ganadora de la apuesta! 🎉</h1>
             <p>{winnerMessage}</p>
-            <div className="celebrate-badge">¡Ganadora del baby shower!</div>
+            <div className="celebrate-badge">¡Ganadora de la apuesta!</div>
           </section>
         </main>
       )}

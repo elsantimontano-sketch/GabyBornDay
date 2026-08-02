@@ -1,11 +1,21 @@
 import participants from "../participants.json";
 
-const birthDateString = import.meta.env.VITE_BIRTHDAY_DATE || "";
-const birthDate = birthDateString ? new Date(birthDateString) : null;
+function parseLocalDate(value) {
+  if (!value) return null;
 
-function compareDays(a, b) {
-  return new Date(b.day) - new Date(a.day);
+  const trimmedValue = String(value).trim();
+  const [year, month, day] = trimmedValue.split("-").map(Number);
+
+  if ([year, month, day].every((part) => Number.isFinite(part))) {
+    return new Date(year, month - 1, day);
+  }
+
+  const parsedDate = new Date(trimmedValue);
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
 }
+
+const birthDateString = import.meta.env.VITE_BIRTHDAY_DATE || "";
+const birthDate = birthDateString ? parseLocalDate(birthDateString) : null;
 
 function App() {
   const today = new Date();
@@ -14,14 +24,19 @@ function App() {
   const birthDateValid = birthDate && !Number.isNaN(birthDate.getTime());
   const isWaiting = !birthDateValid || today < birthDate;
 
-  const eligibleParticipants = birthDateValid
-    ? participants
-        .map((participant) => ({
-          ...participant,
-          date: new Date(participant.day),
-        }))
-        .filter((participant) => !Number.isNaN(participant.date.getTime()))
-    : [];
+  const displayParticipants = participants
+    .map((participant) => ({
+      ...participant,
+      date: parseLocalDate(participant.day),
+    }))
+    .filter((participant) => !Number.isNaN(participant.date.getTime()))
+    .sort((a, b) => a.date - b.date);
+
+  const eligibleParticipants = birthDateValid ? displayParticipants : [];
+  const todayTimestamp = today.getTime();
+  const currentWinningParticipant = displayParticipants.find(
+    (participant) => participant.date.getTime() >= todayTimestamp
+  );
 
   const previousCandidates = eligibleParticipants
     .filter((participant) => participant.date <= birthDate)
@@ -75,19 +90,26 @@ function App() {
         <section className="participants-section">
           <h2>✨ Participantes</h2>
           <div className="participant-grid">
-            {participants.map((participant, index) => (
-              <article key={index} className="participant-card">
-                <span className="avatar">
-                  {participant.name.charAt(0).toUpperCase()}
-                </span>
-                <div>
-                  <p className="participant-name">{participant.name}</p>
-                  <p className="participant-day">
-                    Seleccionado: {participant.day}
-                  </p>
-                </div>
-              </article>
-            ))}
+            {displayParticipants.map((participant) => {
+              const participantDate = participant.date.getTime();
+              const isPast = participantDate < todayTimestamp;
+              const isWinning = participant === currentWinningParticipant && !isPast;
+              const cardClassName = `participant-card${isPast ? " participant-card-lost" : ""}${isWinning ? " participant-card-winning" : ""}`;
+
+              return (
+                <article key={`${participant.name}-${participant.day}`} className={cardClassName}>
+                  <span className="avatar">
+                    {participant.name.charAt(0).toUpperCase()}
+                  </span>
+                  <div>
+                    <p className="participant-name">{participant.name}</p>
+                    <p className="participant-day">
+                      Seleccionado: {participant.day}
+                    </p>
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}

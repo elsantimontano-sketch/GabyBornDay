@@ -104,6 +104,20 @@ select {
   background: rgba(255, 250, 255, 0.95);
   border: 1px solid rgba(222, 160, 196, 0.45);
   box-shadow: 0 12px 30px rgba(174, 96, 143, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+
+.participant-card-lost {
+  background: rgba(255, 236, 236, 0.96);
+  border-color: rgba(220, 80, 80, 0.4);
+  box-shadow: 0 10px 24px rgba(196, 73, 73, 0.12);
+}
+
+.participant-card-winning {
+  background: rgba(235, 255, 240, 0.98);
+  border-color: rgba(58, 168, 95, 0.4);
+  box-shadow: 0 12px 28px rgba(63, 153, 89, 0.16);
+  transform: translateY(-2px);
 }
 
 .avatar {
